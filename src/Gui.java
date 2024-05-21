@@ -12,6 +12,19 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartFrame;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.LogarithmicAxis;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+
+import java.util.Formatter;
+
+
 public class Gui extends JFrame{
     JFrame frameProbki;
 
@@ -23,10 +36,20 @@ public class Gui extends JFrame{
 
     JLabel labelDane, energiaDane, reakcjeDane;
 
-    JPanel rightPanel, leftPanel;
+    JPanel rightPanel, leftPanel, tabEnergy, tabNeutrons, tabUran;
+
+    ChartPanel energy, neutrons, uran;
+
+    JTextField sampleLenght;
 
     JComboBox<String> Ksztalty, Substancje;
+
+    Formatter formatter = new Formatter();
+
+
     public Gui() throws HeadlessException, UnsupportedLookAndFeelException {
+
+
 
         FlatSpacegrayIJTheme.setup();
 
@@ -41,7 +64,7 @@ public class Gui extends JFrame{
         menuBar = new JMenuBar();
         panele = new JTabbedPane();
         rightPanel = new JPanel();
-        rightPanel.setPreferredSize(new Dimension(200, 700));
+        rightPanel.setPreferredSize(new Dimension(250, 700));
         leftPanel = new JPanel();
         add(BorderLayout.WEST, leftPanel);
         add(BorderLayout.EAST, rightPanel);
@@ -63,9 +86,7 @@ public class Gui extends JFrame{
         ZmienMenu.add(AngMenu);
         this.setJMenuBar(menuBar);
 
-        panele.addTab("Energia", new JPanel());
-        panele.addTab("Reakcje lancuchowe", new JPanel());
-        panele.addTab("Ilosc zderzen", new JPanel());
+
 
         leftPanel.setLayout(new GridLayout(6,1));
         leftPanel.add(new JLabel(" Symulacje:"));
@@ -83,7 +104,36 @@ public class Gui extends JFrame{
         rightPanel.add(energiaDane);
         rightPanel.add(reakcjeDane);
 
+        StartMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Charts charts = new Charts();
 
+                if(!sampleLenght.getText().equals("Podaj dlugosc w mm")){
+                    charts.setSampleLenght(Double.parseDouble(sampleLenght.getText()));
+                }
+
+                energy = charts.getChart3();
+                neutrons = charts.getChart1();
+                uran = charts.getChart2();
+
+                tabEnergy = new JPanel(new BorderLayout());
+                tabEnergy.add(energy, BorderLayout.CENTER);
+
+                tabNeutrons = new JPanel(new BorderLayout());
+                tabNeutrons.add(neutrons, BorderLayout.CENTER);
+
+                tabUran = new JPanel(new BorderLayout());
+                tabUran.add(uran, BorderLayout.CENTER);
+
+                panele.addTab("Energia", tabEnergy);
+                panele.addTab("Ilosc neutronow", tabNeutrons);
+                panele.addTab("Ilosc atomow uranu", tabUran);
+
+                energiaDane.setText("Wydzielona energia: " + formatter.format("%e", (double)  charts.getTotalEnergy()) + "MeV");
+
+            }
+        });
 
 
 
@@ -104,11 +154,10 @@ public class Gui extends JFrame{
 
                 frameProbki.add(Ksztalty);
 
-                frameProbki.add(new JLabel("    Dlugosc boku/promien:"));
-                frameProbki.add(new JTextField());
+                sampleLenght = new JTextField("Podaj dlugosc w mm");
 
-                frameProbki.add(new JLabel("    Waga:"));
-                frameProbki.add(new JTextField());
+                frameProbki.add(new JLabel("    Dlugosc boku/promien:"));
+                frameProbki.add(sampleLenght);
 
                 String[] sub = {"Uran 235", "Pluton 239"};
                 Substancje = new JComboBox<>(sub);
@@ -118,6 +167,8 @@ public class Gui extends JFrame{
 
 
                 frameProbki.setVisible(true);
+
+
 
             }
         });

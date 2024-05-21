@@ -7,7 +7,7 @@ public class Collisions {
     double slowNeutronChance = 0.85;
     double fastNeutronChance = 0.10;
 
-    long double slowNeutrons;
+    long slowNeutrons;
     long fastNeutrons;
 
 
@@ -26,14 +26,16 @@ public class Collisions {
 
 
 
-    List<Double> ListOfNeutrons = new ArrayList<Double>();
+    List<Long> ListOfNeutrons = new ArrayList<Long>();
     List<Double> listOfUranNumbers = new ArrayList<Double>();
     List<Long> listOfEnergy = new ArrayList<Long>();
 
-    Collisions(int time) {
+    long totalEnergy = 0;
 
+    double sampleLenght;
 
-        endTime = time;
+    Collisions() {
+
         System.out.println("First slow: " + neutronsEnergy.getSlowNeutrons());
         System.out.println("First fast: " + neutronsEnergy.getFastNeutrons());
         System.out.println("---------------------------");
@@ -45,7 +47,7 @@ public class Collisions {
         int two = 0;
         int one = 0;
 
-        while (numberOfUranAtoms > neutronsEnergy.getSlowNeutrons() + neutronsEnergy.getFastNeutrons()) {
+        while (numberOfUranAtoms > 0) {
             slowNeutrons = neutronsEnergy.getSlowNeutrons();
             fastNeutrons = neutronsEnergy.getFastNeutrons();
 
@@ -77,6 +79,7 @@ public class Collisions {
                         slowNeutronsTime += 2;
                     }
                     energy += 200;
+                    totalEnergy += 200;
 
                 } else {
                     slowNeutronsTime--;
@@ -99,15 +102,18 @@ public class Collisions {
                     }
 
                     energy += 200;
+                    totalEnergy += 200;
 
                 } else {
                     fastNeutronsTime--;
                 }
             }
-            numberOfUranAtoms -= slowNeutronsTime + fastNeutronsTime;
+
 
             neutronsEnergy.setSlowNeutrons(slowNeutronsTime, numberOfUranAtoms);
             neutronsEnergy.setFastNeutrons(fastNeutronsTime, numberOfUranAtoms);
+
+            numberOfUranAtoms -= slowNeutronsTime + fastNeutronsTime;
 
             ListOfNeutrons.add(neutronsEnergy.getSlowNeutrons() + neutronsEnergy.getFastNeutrons());
             listOfUranNumbers.add(numberOfUranAtoms);
@@ -125,7 +131,7 @@ public class Collisions {
         }
     }
 
-    List<Integer> getListOfNeutrons() {
+    List<Long> getListOfNeutrons() {
         return ListOfNeutrons;
     }
 
@@ -133,7 +139,7 @@ public class Collisions {
         return listOfUranNumbers;
     }
 
-    Integer getNeutrons(int i){
+    Long getNeutrons(int i){
         return ListOfNeutrons.get(i);
     }
 
@@ -153,4 +159,11 @@ public class Collisions {
         return listOfUranNumbers.size();
     }
 
+    long getTotalEnergy(){
+        return totalEnergy;
+    }
+
+    void setSampleLenght(double smpl){
+        neutronsEnergy.setSampleLenght(smpl);
+    }
 }

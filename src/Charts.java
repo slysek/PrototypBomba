@@ -1,5 +1,6 @@
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
+import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.plot.PlotOrientation;
@@ -13,12 +14,24 @@ public class Charts {
 //    List<Integer> neutrons = new ArrayList<Integer>();
 //    List<Double> uran = new ArrayList<Double>();
 
+    JFreeChart chart;
+    JFreeChart chart2;
+    JFreeChart chart3;
+
+    long totalEnergy;
+
+    double sampleLenght;
+
+    Collisions c;
+
     Charts (){
         XYSeries series1 = new XYSeries("Neutrons number");
         XYSeries series2 = new XYSeries("Uran atoms number");
         XYSeries series3 = new XYSeries("Energy in MeV");
 
-        Collisions c = new Collisions(15);
+        c = new Collisions();
+
+        totalEnergy = c.getTotalEnergy();
 
         int size = c.getListSize();
 
@@ -39,7 +52,7 @@ public class Charts {
 
         dataset.addSeries(series1);
 
-        JFreeChart chart = ChartFactory.createXYAreaChart(
+        chart = ChartFactory.createXYAreaChart(
                 "Neutrons chart",//Tytul
                 "Time", // opisy osi
                 "Neutrons",
@@ -50,15 +63,12 @@ public class Charts {
                 false
         );
 
-        ChartFrame frame = new ChartFrame("Neutrons chart", chart);
-        frame.setVisible(true);
-        frame.setSize(500,500);
 
         XYSeriesCollection dataset2 = new XYSeriesCollection();
 
         dataset2.addSeries(series2);
 
-        JFreeChart chart2 = ChartFactory.createXYAreaChart(
+        chart2 = ChartFactory.createXYAreaChart(
                 "Uran chart",//Tytul
                 "Time", // opisy osi
                 "No. of uran atoms",
@@ -69,15 +79,12 @@ public class Charts {
                 false
         );
 
-        ChartFrame frame2 = new ChartFrame("Uran chart", chart2);
-        frame2.setVisible(true);
-        frame2.setSize(500,500);
 
         XYSeriesCollection dataset3 = new XYSeriesCollection();
 
         dataset3.addSeries(series3);
 
-        JFreeChart chart3 = ChartFactory.createXYAreaChart(
+        chart3 = ChartFactory.createXYAreaChart(
                 "Energy chart",//Tytul
                 "Time", // opisy osi
                 "Energy, MeV",
@@ -92,12 +99,25 @@ public class Charts {
 //        LogarithmicAxis yAxis = new LogarithmicAxis("Energy, MeV");
 //        plot3.setRangeAxis(yAxis);
 
-        ChartFrame frame3 = new ChartFrame("Energy chart", chart3);
-        frame3.setVisible(true);
-        frame3.setSize(500,500);
     }
 
-    public static void main(String[] args) {
-        Charts charts = new Charts();
+    ChartPanel getChart1(){
+        return new ChartPanel(chart);
+    }
+
+    ChartPanel getChart2(){
+        return new ChartPanel(chart2);
+    }
+
+    ChartPanel getChart3(){
+        return new ChartPanel(chart3);
+    }
+    
+    long getTotalEnergy(){
+        return totalEnergy;
+    }
+
+    void setSampleLenght(double smpl){
+        c.setSampleLenght(smpl);
     }
 }

@@ -8,15 +8,15 @@ public class NeutronsEnergy {
     long slowNeutrons = 0;
     long fastNeutrons = 0;
 
-    double slowNeutronsInSample;
-    double fastNeutronsInSample;
+    long slowNeutronsInSample;
+    long fastNeutronsInSample;
 
     static double uranN235 = 4.89 * Math.pow(10, 22);
     static double sigmaSlow = 580 * Math.pow(10, -28);
     static double sigmaFast = (Math.random() * 90 + 10) * Math.pow(10, -28);
     static double lSlow = 1/uranN235/sigmaSlow;
     static double lFast = 1/uranN235/sigmaFast;
-    static double sampleLenght = 1000;
+    double sampleLenght = 1000;
     double x;
 
     double uranToNeutronsCoeff = 1;
@@ -55,15 +55,15 @@ public class NeutronsEnergy {
             }
         }
 
-        slowNeutronsInSample *= coff;
-        fastNeutronsInSample *= coff;
+        slowNeutronsInSample = (long) (slowNeutronsInSample * coff);
+        fastNeutronsInSample = (long) (fastNeutronsInSample * coff);
     }
 
-    double getSlowNeutrons(){
+    long getSlowNeutrons(){
         return slowNeutronsInSample;
     }
 
-    double getFastNeutrons(){
+    long getFastNeutrons(){
         return fastNeutronsInSample;
     }
 
@@ -75,6 +75,10 @@ public class NeutronsEnergy {
     void setFastNeutrons(long neutrons, double atoms){
         fastNeutrons = neutrons;
         calculateNeutrons(atoms);
+    }
+
+    void setSampleLenght(double smpl){
+        sampleLenght = smpl;
     }
 
 }
