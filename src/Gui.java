@@ -9,6 +9,8 @@ import com.formdev.flatlaf.intellijthemes.FlatSpacegrayIJTheme;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 import javax.swing.*;
 
@@ -23,9 +25,21 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import java.util.Formatter;
+import java.util.Properties;
 
 
 public class Gui extends JFrame{
+
+    // final - Wartości nie można zmienić w czasie działania programu
+    final String Sciezka = "resources/";
+    final String PolskiPlik = "Bundle_pl_PL.properties";
+    final String AngielskiPlik = "Bundle_en_US.properties";
+
+    Properties Angielski;
+    Properties Polski;
+
+    Properties Selected;   // Wartość obecnie używana
+
     JFrame frameProbki;
 
     JMenuBar menuBar;
@@ -37,10 +51,13 @@ public class Gui extends JFrame{
     JLabel labelDane, energiaDane, reakcjeDane;
 
     JPanel rightPanel, leftPanel, tabEnergy, tabNeutrons, tabUran;
+    JLabel Symulacje;
+    JButton Sym1, Sym2, Sym3;
 
     ChartPanel energy, neutrons, uran;
 
-    JTextField sampleLenght;
+
+    JTextField sampleLength;
 
     JComboBox<String> Ksztalty, Substancje;
 
@@ -49,7 +66,22 @@ public class Gui extends JFrame{
 
     public Gui() throws HeadlessException, UnsupportedLookAndFeelException {
 
-
+        // Wczytanie plików Bundle_xx_XX.properties, dla każdego języka
+        Polski = new Properties();
+        try {
+            Polski.load(new FileInputStream(Sciezka + PolskiPlik));
+        } catch(IOException e) {
+            System.out.println("Błąd przy wczytywaniu słownika: " + Sciezka + PolskiPlik);
+        }
+        
+        Angielski = new Properties();
+        try {
+            Angielski.load(new FileInputStream(Sciezka + AngielskiPlik));
+        } catch(IOException e) {
+            System.out.println("Błąd przy wczytywaniu słownika: " + Sciezka + AngielskiPlik);
+        }
+        
+        Selected = Polski;  // Domyślnie
 
         FlatSpacegrayIJTheme.setup();
 
@@ -89,10 +121,14 @@ public class Gui extends JFrame{
 
 
         leftPanel.setLayout(new GridLayout(6,1));
-        leftPanel.add(new JLabel(" Symulacje:"));
-        leftPanel.add(new JButton("Sym 1"));
-        leftPanel.add(new JButton("Sym 2"));
-        leftPanel.add(new JButton("Sym 3"));
+        Symulacje = new JLabel(" Symulacje:");
+        leftPanel.add(Symulacje);
+        Sym1 = new JButton("Sym 1");
+        Sym2 = new JButton("Sym 2");
+        Sym3 = new JButton("Sym 3");
+        leftPanel.add(Sym1);
+        leftPanel.add(Sym2);
+        leftPanel.add(Sym3);
 
 
         rightPanel.setLayout(new GridLayout(6,1));
@@ -109,8 +145,8 @@ public class Gui extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 Charts charts = new Charts();
 
-                if(!sampleLenght.getText().equals("Podaj dlugosc w mm")){
-                    charts.setSampleLenght(Double.parseDouble(sampleLenght.getText()));
+                if(!sampleLength.getText().equals("")){
+                    charts.setSampleLenght(Double.parseDouble(sampleLength.getText()));
                 }
 
                 energy = charts.getChart3();
@@ -130,7 +166,7 @@ public class Gui extends JFrame{
                 panele.addTab("Ilosc neutronow", tabNeutrons);
                 panele.addTab("Ilosc atomow uranu", tabUran);
 
-                energiaDane.setText("Wydzielona energia: " + formatter.format("%e", (double)  charts.getTotalEnergy()) + "MeV");
+                energiaDane.setText(energiaDane.getText() + formatter.format(" %e", (double)  charts.getTotalEnergy()) + "MeV");
 
             }
         });
@@ -143,39 +179,84 @@ public class Gui extends JFrame{
                 frameProbki = new JFrame();
                 frameProbki.setSize(400, 200);
                 frameProbki.setLocationRelativeTo(null);
-                frameProbki.setTitle("Ustawienia probki");
+                frameProbki.setTitle(Selected.getProperty("label.title"));
                 frameProbki.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 frameProbki.setLayout(new GridLayout(4, 2));
 
-                frameProbki.add(new JLabel("    Ksztalt probki:"));
+                frameProbki.add(new JLabel(Selected.getProperty("label.ksztalt")));
 
-                String[] options = {"Szescian", "Kula"};
+                String[] options = {
+                    Selected.getProperty("shape.cube"),
+                    Selected.getProperty("shape.sphere")
+                };
                 Ksztalty = new JComboBox<>(options);
 
                 frameProbki.add(Ksztalty);
 
-                sampleLenght = new JTextField("Podaj dlugosc w mm");
+                sampleLength = new JTextField();
 
-                frameProbki.add(new JLabel("    Dlugosc boku/promien:"));
-                frameProbki.add(sampleLenght);
+                frameProbki.add(new JLabel(Selected.getProperty("label.dlugosc")));
+                frameProbki.add(sampleLength);
 
-                String[] sub = {"Uran 235", "Pluton 239"};
+                String[] sub = {
+                    Selected.getProperty("sub.uranium"),
+                    Selected.getProperty("sub.plutonium")
+                };
                 Substancje = new JComboBox<>(sub);
 
-                frameProbki.add(new JLabel("    Izotop:"));
+                frameProbki.add(new JLabel(Selected.getProperty("label.izotop")));
                 frameProbki.add(Substancje);
 
 
                 frameProbki.setVisible(true);
-
-
-
             }
         });
 
+        PolMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Selected = Polski;
+                setTitle("Bomba");
+                // frameProbki.setTitle("Ustawienia probki");
+                wczytajNazwy(Polski);
+            }
+        });
 
+        AngMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Selected = Angielski;
+                setTitle("Bomb");
+                // frameProbki.setTitle("Sample configuration");
+                wczytajNazwy(Angielski);
+            }
+        });
+
+        wczytajNazwy(Selected);
     }
 
+    // Funkcja pomocnicza - w razie potrzeby dodać więcej pól
+    private void wczytajNazwy(Properties properties) {
+        MenuMenu.setText(properties.getProperty("menu.file"));
+        StartMenu.setText(properties.getProperty("menu.start"));
+        EksMenu.setText(properties.getProperty("menu.export"));
+        daneMenu.setText(properties.getProperty("menu.enterData"));
+        ZmienMenu.setText(properties.getProperty("menu.language"));
+        PolMenu.setText(properties.getProperty("menu.polish"));
+        AngMenu.setText(properties.getProperty("menu.english"));
+        Symulacje.setText(properties.getProperty("label.simulations"));
+        Sym1.setText(properties.getProperty("label.sim1"));
+        Sym2.setText(properties.getProperty("label.sim2"));
+        Sym3.setText(properties.getProperty("label.sim3"));
+        labelDane.setText(properties.getProperty("label.data"));
+        energiaDane.setText(properties.getProperty("label.energia"));
+        reakcjeDane.setText(properties.getProperty("label.reakcje"));
+        try {
+            panele.setTitleAt(0, properties.getProperty("tab.energy"));
+            panele.setTitleAt(1, properties.getProperty("tab.neutrons"));
+            panele.setTitleAt(2, properties.getProperty("tab.atoms"));
+        } catch (Exception e) {} // Jeżeli nie istnieje
+    }
 
     public static void main(String[] args) throws UnsupportedLookAndFeelException {
         Gui okno = new Gui();
