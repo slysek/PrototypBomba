@@ -2,6 +2,11 @@
   <library name="flatlaf-3.4">
     <CLASSES>
       <root url="jar://D:/Pobrane/flatlaf-3.4.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jfreechart-1.0.19/jfreechart-1.0.19/lib/jcommon-1.0.23.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jfreechart-1.0.19/jfreechart-1.0.19/lib/jfreechart-1.0.19.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jfreechart-1.0.19/flatlaf java/flatlaf-3.4.1.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jfreechart-1.0.19/flatlaf java/flatlaf-intellij-themes-3.4.1.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jfreechart-1.0.19/jfreechart-1.0.19/jfreechart-1.0.19-demo.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

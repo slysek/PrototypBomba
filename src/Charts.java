@@ -8,7 +8,6 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-
 public class Charts {
 
 //    List<Integer> neutrons = new ArrayList<Integer>();
