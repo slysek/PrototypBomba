@@ -162,9 +162,9 @@ public class Gui extends JFrame{
                 tabUran = new JPanel(new BorderLayout());
                 tabUran.add(uran, BorderLayout.CENTER);
 
-                panele.addTab("Energia", tabEnergy);
-                panele.addTab("Ilosc neutronow", tabNeutrons);
-                panele.addTab("Ilosc atomow uranu", tabUran);
+                panele.addTab(Selected.getProperty("tab.energy"), tabEnergy);
+                panele.addTab(Selected.getProperty("tab.neutrons"), tabNeutrons);
+                panele.addTab(Selected.getProperty("tab.atoms"), tabUran);
 
                 energiaDane.setText(energiaDane.getText() + formatter.format("%e", (double)  charts.getTotalEnergy()) + "MeV");
 
