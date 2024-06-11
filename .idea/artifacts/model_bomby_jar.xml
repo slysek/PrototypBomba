@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="model bomby:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/model_bomby_jar</output-path>
+    <root id="archive" name="model bomby.jar">
+      <element id="module-output" name="model bomby" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../flatlaf java/flatlaf-3.4.1.jar" path-in-jar="/" />
+      <element id="library" level="project" name="jfreechart-1.0.19" />
+      <element id="library" level="project" name="jcommon-1.0.23" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../jfreechart-1.0.19/lib/jfreechart-1.0.19.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../jfreechart-1.0.19/lib/jcommon-1.0.23.jar" path-in-jar="/" />
+      <element id="library" level="project" name="flatlaf-3.4.1" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../flatlaf java/flatlaf-intellij-themes-3.4.1.jar" path-in-jar="/" />
+      <element id="library" level="project" name="flatlaf-intellij-themes-3.4.1" />
+    </root>
+  </artifact>
+</component>

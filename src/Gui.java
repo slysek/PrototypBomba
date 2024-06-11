@@ -24,6 +24,15 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.File;
+import java.io.IOException;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.ChartPanel;
+
+
 import java.util.Formatter;
 import java.util.Properties;
 
@@ -120,15 +129,15 @@ public class Gui extends JFrame{
 
 
 
-        leftPanel.setLayout(new GridLayout(6,1));
+        leftPanel.setLayout(new GridLayout(1,1));
         Symulacje = new JLabel(" Symulacje:");
         leftPanel.add(Symulacje);
         Sym1 = new JButton("Sym 1");
         Sym2 = new JButton("Sym 2");
         Sym3 = new JButton("Sym 3");
-        leftPanel.add(Sym1);
-        leftPanel.add(Sym2);
-        leftPanel.add(Sym3);
+//        leftPanel.add(Sym1);
+//        leftPanel.add(Sym2);
+//        leftPanel.add(Sym3);
 
 
         rightPanel.setLayout(new GridLayout(6,1));
@@ -217,6 +226,16 @@ public class Gui extends JFrame{
             }
         });
 
+        EksMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveChartWithDialog(energy);
+                saveChartWithDialog(neutrons);
+                saveChartWithDialog(uran);
+            }
+        });
+
+
         PolMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -272,5 +291,32 @@ public class Gui extends JFrame{
         okno.setVisible(true);
     }
 
+
+    public void saveChartWithDialog(ChartPanel chartPanel) {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Zapisz wykres");
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("JPEG Image", "jpg", "jpeg");
+        fileChooser.addChoosableFileFilter(filter);
+
+        int userSelection = fileChooser.showSaveDialog(this);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            String filePath = fileToSave.getAbsolutePath();
+
+            if (!filePath.toLowerCase().endsWith(".jpg") && !filePath.toLowerCase().endsWith(".jpeg")) {
+                filePath += ".jpg";
+            }
+
+            try {
+                JFreeChart chart = chartPanel.getChart();
+                ChartUtilities.saveChartAsJPEG(new File(filePath), chart, chartPanel.getWidth(), chartPanel.getHeight());
+                System.out.println("Wykres zapisany pomyślnie: " + filePath);
+            } catch (IOException e) {
+                System.out.println("Błąd podczas zapisywania wykresu: " + e.getMessage());
+            }
+        }
+    }
 
 }
