@@ -21,18 +21,23 @@ public class Charts {
 
     long totalEnergy;
 
+    long reakcje;
+
     double sampleLenght;
 
     Collisions c;
 
-    Charts (){
+    Charts (double smpl){
         XYSeries series1 = new XYSeries("Neutrons number");
         XYSeries series2 = new XYSeries("Uran atoms number");
         XYSeries series3 = new XYSeries("Energy in MeV");
 
-        c = new Collisions();
+        this.sampleLenght = smpl;
+
+        c = new Collisions(sampleLenght);
 
         totalEnergy = c.getTotalEnergy();
+        reakcje = c.getReakcje();
 
         int size = c.getListSize();
 
@@ -40,6 +45,8 @@ public class Charts {
         for (int i = 0; i < size; i++) {
             series1.add(i, c.getNeutrons(i));
         }
+
+        System.out.println(sizeEnergy);
 
         for (int i = 0; i < size; i++) {
             series2.add(i, c.getUran(i));
@@ -113,12 +120,12 @@ public class Charts {
     ChartPanel getChart3(){
         return new ChartPanel(chart3);
     }
-    
+
     long getTotalEnergy(){
         return totalEnergy;
     }
 
-    void setSampleLenght(double smpl){
-        c.setSampleLenght(smpl);
+    long getReakcje(){
+        return reakcje;
     }
 }

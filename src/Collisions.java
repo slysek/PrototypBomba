@@ -22,9 +22,11 @@ public class Collisions {
 
     double numberOfUranAtoms = 235*Math.pow(10, 6);
 
-    NeutronsEnergy neutronsEnergy = new NeutronsEnergy(100000,30000, numberOfUranAtoms);
+    double sampleLenght;
+    double uranToNeutronsCoeff;
 
-
+    double a = 1;
+    double coff = 1;
 
     List<Long> ListOfNeutrons = new ArrayList<Long>();
     List<Double> listOfUranNumbers = new ArrayList<Double>();
@@ -32,10 +34,12 @@ public class Collisions {
 
     long totalEnergy = 0;
 
-    double sampleLenght;
+    long reakcje = 0;
 
-    Collisions() {
+    Collisions(double smpl) {
 
+        this.sampleLenght = smpl;
+        NeutronsEnergy neutronsEnergy = new NeutronsEnergy(100000,30000, numberOfUranAtoms, sampleLenght);
         System.out.println("First slow: " + neutronsEnergy.getSlowNeutrons());
         System.out.println("First fast: " + neutronsEnergy.getFastNeutrons());
         System.out.println("---------------------------");
@@ -51,11 +55,26 @@ public class Collisions {
             slowNeutrons = neutronsEnergy.getSlowNeutrons();
             fastNeutrons = neutronsEnergy.getFastNeutrons();
 
+            uranToNeutronsCoeff = numberOfUranAtoms / (slowNeutrons + fastNeutrons);
+
+            if(uranToNeutronsCoeff < 1){
+                coff = 0.6;
+                if(slowNeutrons + fastNeutrons > numberOfUranAtoms){
+                    slowNeutrons = (long) numberOfUranAtoms;
+                    System.out.println("ZADUZO" + slowNeutrons);
+                }
+                neutronsEnergy.setSlowNeutrons((long) (slowNeutrons * coff), numberOfUranAtoms);
+                neutronsEnergy.setFastNeutrons(fastNeutrons, numberOfUranAtoms);
+
+                slowNeutrons = neutronsEnergy.getSlowNeutrons();
+                fastNeutrons = neutronsEnergy.getFastNeutrons();
+            }
+
             System.out.println("Slow begin: " + slowNeutrons);
             System.out.println("Fast begin: " + fastNeutrons);
-            double a = numberOfUranAtoms - slowNeutrons;
+
             System.out.println("Number of Uran: " + numberOfUranAtoms);
-            System.out.println("A: " + a);
+
 
             long slowNeutronsTime = slowNeutrons; // during for loop
             long fastNeutronsTime = fastNeutrons; // during for loop
@@ -110,24 +129,49 @@ public class Collisions {
             }
 
 
+            numberOfUranAtoms -= slowNeutronsTime + fastNeutronsTime;
+
+//            if(numberOfUranAtoms < 0){
+//                coff = 0.6;
+//                if(slowNeutrons + fastNeutrons > numberOfUranAtoms){
+//                    slowNeutronsTime = (long) numberOfUranAtoms;
+//                    System.out.println("ZADUZO" + slowNeutronsTime);
+//                }
+//                neutronsEnergy.setSlowNeutrons((long) (slowNeutronsTime * coff), numberOfUranAtoms);
+//                neutronsEnergy.setFastNeutrons(fastNeutronsTime, numberOfUranAtoms);
+//            }
+//            else{
+//                neutronsEnergy.setSlowNeutrons(slowNeutronsTime, numberOfUranAtoms);
+//                neutronsEnergy.setFastNeutrons(fastNeutronsTime, numberOfUranAtoms);
+//            }
+
             neutronsEnergy.setSlowNeutrons(slowNeutronsTime, numberOfUranAtoms);
             neutronsEnergy.setFastNeutrons(fastNeutronsTime, numberOfUranAtoms);
 
-            numberOfUranAtoms -= slowNeutronsTime + fastNeutronsTime;
 
-            ListOfNeutrons.add(neutronsEnergy.getSlowNeutrons() + neutronsEnergy.getFastNeutrons());
-            listOfUranNumbers.add(numberOfUranAtoms);
-            listOfEnergy.add(energy);
 
-            System.out.println("Slow: " + neutronsEnergy.getSlowNeutrons());
-            System.out.println("Fast: " + neutronsEnergy.getFastNeutrons());
-            System.out.println("Number of Uran: " + numberOfUranAtoms);
-            System.out.println("One: " + one);
-            System.out.println("Two: " + two);
-            System.out.println("Three: " + three);
-            System.out.println("Energy: " + energy);
-            System.out.println("Size energy: " + listOfEnergy.size());
-            System.out.println("---------------------------");
+            if(numberOfUranAtoms > 0){
+                ListOfNeutrons.add(neutronsEnergy.getSlowNeutrons() + neutronsEnergy.getFastNeutrons());
+                listOfUranNumbers.add(numberOfUranAtoms);
+                listOfEnergy.add(totalEnergy);
+
+                reakcje = one + two + three;
+
+                System.out.println("Slow: " + neutronsEnergy.getSlowNeutrons());
+                System.out.println("Fast: " + neutronsEnergy.getFastNeutrons());
+                System.out.println("Number of Uran: " + numberOfUranAtoms);
+                System.out.println("One: " + one);
+                System.out.println("Two: " + two);
+                System.out.println("Three: " + three);
+                System.out.println("Energy: " + energy);
+                System.out.println("Size energy: " + listOfEnergy.size());
+                System.out.println("---------------------------");
+            }
+
+            if(fastNeutrons + slowNeutrons == 0){
+                break;
+            }
+
         }
     }
 
@@ -163,7 +207,7 @@ public class Collisions {
         return totalEnergy;
     }
 
-    void setSampleLenght(double smpl){
-        neutronsEnergy.setSampleLenght(smpl);
+    long getReakcje(){
+        return reakcje;
     }
 }

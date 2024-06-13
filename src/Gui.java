@@ -67,6 +67,9 @@ public class Gui extends JFrame{
 
     JTextField sampleLenght;
 
+    double smpl;
+    double totalEnergy;
+
     JComboBox<String> Ksztalty, Substancje;
 
     Formatter formatter = new Formatter();
@@ -152,31 +155,43 @@ public class Gui extends JFrame{
         StartMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Charts charts = new Charts();
 
-                if(!sampleLenght.getText().equals("Podaj dlugosc w mm")){
-                    charts.setSampleLenght(Double.parseDouble(sampleLenght.getText()));
-                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Charts charts = new Charts(smpl);
 
-                energy = charts.getChart3();
-                neutrons = charts.getChart1();
-                uran = charts.getChart2();
+                        JComponent energy = charts.getChart3();
+                        JComponent neutrons = charts.getChart1();
+                        JComponent uran = charts.getChart2();
 
-                tabEnergy = new JPanel(new BorderLayout());
-                tabEnergy.add(energy, BorderLayout.CENTER);
+                        double totalEnergy = (double) charts.getTotalEnergy();
 
-                tabNeutrons = new JPanel(new BorderLayout());
-                tabNeutrons.add(neutrons, BorderLayout.CENTER);
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                JPanel tabEnergy = new JPanel(new BorderLayout());
+                                tabEnergy.add(energy, BorderLayout.CENTER);
 
-                tabUran = new JPanel(new BorderLayout());
-                tabUran.add(uran, BorderLayout.CENTER);
+                                JPanel tabNeutrons = new JPanel(new BorderLayout());
+                                tabNeutrons.add(neutrons, BorderLayout.CENTER);
 
-                panele.addTab(Selected.getProperty("tab.energy"), tabEnergy);
-                panele.addTab(Selected.getProperty("tab.neutrons"), tabNeutrons);
-                panele.addTab(Selected.getProperty("tab.atoms"), tabUran);
+                                JPanel tabUran = new JPanel(new BorderLayout());
+                                tabUran.add(uran, BorderLayout.CENTER);
 
-                energiaDane.setText(energiaDane.getText() + formatter.format("%e", (double)  charts.getTotalEnergy()) + "MeV");
+                                panele.addTab(Selected.getProperty("tab.energy"), tabEnergy);
+                                panele.addTab(Selected.getProperty("tab.neutrons"), tabNeutrons);
+                                panele.addTab(Selected.getProperty("tab.atoms"), tabUran);
 
+                                energiaDane.setText("Wydzielona energia: ");
+                                energiaDane.setText(energiaDane.getText() + String.format("%e", totalEnergy) + " MeV");
+
+                                reakcjeDane.setText("Wydzielona reakcji: ");
+                                reakcjeDane.setText(reakcjeDane.getText() + String.format("%e", (double) charts.getReakcje()) + " MeV");
+                            }
+                        });
+                    }
+                }).start();
             }
         });
 
@@ -192,9 +207,25 @@ public class Gui extends JFrame{
                 frameProbki.setLocationRelativeTo(null);
                 frameProbki.setTitle(Selected.getProperty("label.title"));
                 frameProbki.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                frameProbki.setLayout(new GridLayout(4, 2));
+                frameProbki.setLayout(new BorderLayout());
 
-                frameProbki.add(new JLabel(Selected.getProperty(    "label.ksztalt")));
+                JPanel centerPanel = new JPanel();
+                JPanel bottomPanel = new JPanel();
+                JButton okButton = new JButton("OK");
+
+                bottomPanel.add(okButton);
+
+                okButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        smpl = Double.parseDouble(sampleLenght.getText());
+                        frameProbki.dispose();
+                    }
+                });
+
+                centerPanel.setLayout(new GridLayout(4, 2));
+
+                centerPanel.add(new JLabel(Selected.getProperty(    "label.ksztalt")));
 
                 String[] options = {
                         Selected.getProperty("shape.cube"),
@@ -202,12 +233,12 @@ public class Gui extends JFrame{
                 };
                 Ksztalty = new JComboBox<>(options);
 
-                frameProbki.add(Ksztalty);
+                centerPanel.add(Ksztalty);
 
                 sampleLenght = new JTextField();
 
-                frameProbki.add(new JLabel(Selected.getProperty("label.dlugosc")));
-                frameProbki.add(sampleLenght);
+                centerPanel.add(new JLabel(Selected.getProperty("label.dlugosc")));
+                centerPanel.add(sampleLenght);
 
                 String[] sub = {
                         Selected.getProperty("sub.uranium"),
@@ -215,9 +246,12 @@ public class Gui extends JFrame{
                 };
                 Substancje = new JComboBox<>(sub);
 
-                frameProbki.add(new JLabel(Selected.getProperty("label.izotop")));
-                frameProbki.add(Substancje);
+                centerPanel.add(new JLabel(Selected.getProperty("label.izotop")));
+                centerPanel.add(Substancje);
 
+
+                frameProbki.add(centerPanel, BorderLayout.CENTER);
+                frameProbki.add(bottomPanel, BorderLayout.SOUTH);
 
                 frameProbki.setVisible(true);
 
@@ -260,7 +294,7 @@ public class Gui extends JFrame{
 
 
 
-        }
+    }
 
 
     private void wczytajNazwy(Properties properties) {

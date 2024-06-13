@@ -16,15 +16,18 @@ public class NeutronsEnergy {
     static double sigmaFast = (Math.random() * 90 + 10) * Math.pow(10, -28);
     static double lSlow = 1/uranN235/sigmaSlow;
     static double lFast = 1/uranN235/sigmaFast;
-    double sampleLenght = 1000;
+    double sampleLenght;
     double x;
 
     double uranToNeutronsCoeff = 1;
 
-    NeutronsEnergy(int slow, int fast, double noOfAtoms) {
+    NeutronsEnergy(int slow, int fast, double noOfAtoms, double smpl) {
         this.slowNeutrons = slow;
         this.fastNeutrons = fast;
+        this.sampleLenght = smpl;
         calculateNeutrons(noOfAtoms);
+
+        System.out.println(sampleLenght);
     }
 
     void calculateNeutrons(double noOfAtoms){
@@ -36,9 +39,6 @@ public class NeutronsEnergy {
 
         double coff = 1.0;
 
-        if(uranToNeutronsCoeff < 1){ coff = uranToNeutronsCoeff;}
-
-        System.out.println(coff);
 
         for (int i = 0; i < slowNeutrons; i++) {
             x = -coff*lSlow*Math.log(Math.random());
@@ -57,6 +57,8 @@ public class NeutronsEnergy {
 
         slowNeutronsInSample = (long) (slowNeutronsInSample * coff);
         fastNeutronsInSample = (long) (fastNeutronsInSample * coff);
+
+
     }
 
     long getSlowNeutrons(){
